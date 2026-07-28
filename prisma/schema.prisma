@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User{
+  id        Int    @id @default(autoincrement())
+  username  String @unique
+  password  String  
+  nama      String
+  role      Role    @default(USER)
+  purchases Purchase[]
+  sales    Sale[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category{
+  id          Int     @id @default(autoincrement())
+  namaCategory        String
+  products      Product[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Supplier{
+  id          Int     @id @default(autoincrement())
+  namaSupplier        String
+  alamat      String
+  telepon     String
+  products      Product[]
+  purchases      Purchase[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Product{
+  id          Int     @id @default(autoincrement())
+  namaProduct        String
+  harga       Decimal
+  stok        Int
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+  supplierId  Int
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  unit        String
+  status      Boolean @default(true)
+  purchaseDetails PurchaseDetail[]
+  stockMovements StockMovement[]
+  saleDetails SaleDetail[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Purchase{
+  id          Int     @id @default(autoincrement())
+  supplierId  Int
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  userId      Int
+  user        User @relation(fields: [userId], references: [id])
+  purchaseDate DateTime @default(now())
+  totalHarga  Decimal
+  purchaseNumber String @unique
+  purchaseDetails PurchaseDetail[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PurchaseDetail{
+  id          Int     @id @default(autoincrement())
+  purchaseId  Int
+  purchase    Purchase @relation(fields: [purchaseId], references: [id])
+  productId   Int
+  product     Product @relation(fields: [productId], references: [id])
+  jumlah    Int
+  hargaPerUnit Decimal
+  totalHarga Decimal
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum ReferenceType {
+  PURCHASE
+  SALE
+  ADJUSTMENT
+}
+
+model StockMovement{
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  product     Product @relation(fields: [productId], references: [id])
+  quantity      Int
+  keterangan  String
+  expiredDate DateTime
+  referenceId  Int
+  referenceType ReferenceType @default(PURCHASE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Sale{
+  id          Int     @id @default(autoincrement())
+  userId      Int
+  user        User @relation(fields: [userId], references: [id])
+  saleDate    DateTime @default(now())
+  bayar       Decimal
+  kembalian   Decimal
+  totalHarga  Decimal
+  invoiceNumber String @unique
+  saleDetails SaleDetail[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SaleDetail{
+  id          Int     @id @default(autoincrement())
+  saleId      Int
+  sale        Sale @relation(fields: [saleId], references: [id])
+  productId   Int
+  product     Product @relation(fields: [productId], references: [id])
+  jumlah      Int
+  harga Decimal
+  subtotal  Decimal
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
