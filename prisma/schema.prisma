@@ -26,7 +26,7 @@ model User{
   purchases Purchase[]
   sales    Sale[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Category{
@@ -34,7 +34,7 @@ model Category{
   namaCategory        String
   products      Product[]
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Supplier{
@@ -45,7 +45,7 @@ model Supplier{
   products      Product[]
   purchases      Purchase[]
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Product{
@@ -63,7 +63,7 @@ model Product{
   stockMovements StockMovement[]
   saleDetails SaleDetail[]
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Purchase{
@@ -77,7 +77,7 @@ model Purchase{
   purchaseNumber String @unique
   purchaseDetails PurchaseDetail[]
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model PurchaseDetail{
@@ -90,7 +90,7 @@ model PurchaseDetail{
   hargaPerUnit Decimal
   totalHarga Decimal
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum ReferenceType {
@@ -109,7 +109,7 @@ model StockMovement{
   referenceId  Int
   referenceType ReferenceType @default(PURCHASE)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Sale{
@@ -123,7 +123,7 @@ model Sale{
   invoiceNumber String @unique
   saleDetails SaleDetail[]
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model SaleDetail{
@@ -136,5 +136,5 @@ model SaleDetail{
   harga Decimal
   subtotal  Decimal
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
