@@ -1,5 +1,6 @@
 import {ProductRepository} from "@/repositories/product.repository";
 import {Prisma, Product} from "@/generated/prisma/client";
+import { AppError } from "@/errors/AppError"
 
 
 export const ProductService = {
@@ -11,30 +12,59 @@ export const ProductService = {
     async findById(id : number) : Promise<Product | null> {
         const product = await ProductRepository.findById(id);
         if (!product){
-            throw new Error("Product not found");
+            throw new AppError("Product not found");
         };
         return product;
     },
 
     async create(data: Prisma.ProductCreateInput) : Promise<Product>{
-        if (!data.namaProduct.trim()) {
-            throw new Error("Nama produk wajib diisi.");
+
+        if(typeof data.namaProduct !== "string"){
+            throw new AppError ("Nama produk harus berupa string");
+        }
+
+        if (!data.namaProduct?.trim()) {
+            throw new AppError ("Nama produk wajib diisi.");
         }
 
         if (data.namaProduct.trim().length < 3) {
-            throw new Error("Nama produk minimal 3 karakter.");
+            throw new AppError ("Nama produk minimal 3 karakter.");
+        }       
+
+        if (data.harga === undefined || data.harga === null) {
+            throw new AppError ("Harga wajib diisi.");
+        }   
+        
+        if(typeof data.harga !== "number"){
+            throw new AppError ("Harga harus berupa number");
         }
 
         if (Number(data.harga) <= 0) {
-            throw new Error("Harga harus lebih dari 0.");
+            throw new AppError ("Harga harus lebih dari 0.");
+        }
+
+        if (data.stok === undefined || data.stok === null) {
+            throw new AppError ("Stok wajib diisi.");
+        }
+        
+        if (!Number.isInteger(data.stok)){
+            throw new AppError ("stok harus berupa number");
         }
 
         if (data.stok < 0) {
-            throw new Error("Stok tidak boleh negatif.");
+            throw new AppError ("Stok tidak boleh negatif.");
         }
 
-        if (!data.unit.trim()) {
-            throw new Error("Satuan produk wajib diisi.");
+        if (data.unit === undefined || data.unit === null) {
+            throw new AppError ("Unit wajib diisi.");
+        }  
+
+        if(typeof data.unit !== 'string'){
+            throw new AppError ("Unit harus berupa string");
+        }
+
+        if (!data.unit?.trim()) {
+            throw new AppError ("Satuan produk wajib diisi.");
         }
 
         return ProductRepository.create(data);

@@ -3,7 +3,9 @@ import type { Prisma, Product } from '@/generated/prisma/client';
 
 export const ProductRepository = {
   async findAll():Promise<Product[]> {
-    return prisma.product.findMany();
+    return prisma.product.findMany({include:{
+      category : true
+    }});
   },
 
   async findById(id: number): Promise<Product | null> {
