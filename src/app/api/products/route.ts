@@ -16,15 +16,7 @@ export async function GET() {
         )
     }
     catch(error){
-        const message =
-        error instanceof Error
-            ? error.message
-            : "Internal Server Error";
-
-        return NextResponse.json(
-            { error: message },
-            { status: 500 }
-        );
+        return handleApiError(error);
     }
 }
 
@@ -42,14 +34,6 @@ export async function POST(request: Request){
             );
         
     }catch(error){
-        const message =
-        error instanceof Error
-            ? error.message
-            : "Internal Server Error";
-
-        return NextResponse.json(
-            { error: message },
-            { status: 500 }
-        );
+        return handleApiError(error);
     }
 }

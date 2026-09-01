@@ -1,6 +1,7 @@
 import {ProductRepository} from "@/repositories/product.repository";
 import {Prisma, Product} from "@/generated/prisma/client";
 import { AppError } from "@/errors/AppError"
+import { NotFoundError } from "@/errors/not-found.error";
 
 
 export const ProductService = {
@@ -12,7 +13,7 @@ export const ProductService = {
     async findById(id : number) : Promise<Product | null> {
         const product = await ProductRepository.findById(id);
         if (!product){
-            throw new AppError("Product not found");
+            throw new NotFoundError();
         };
         return product;
     },
@@ -73,7 +74,7 @@ export const ProductService = {
     async update(id : number, data : Prisma.ProductUpdateInput) : Promise<Product>{
        const product = await ProductRepository.findById(id)
        if(!product) {
-        throw new Error("product not found");    
+        throw new AppError("product not found");    
        }
 
        return ProductRepository.update(id, data);
@@ -82,7 +83,7 @@ export const ProductService = {
     async delete(id : number) : Promise<void>{
         const product = await ProductRepository.findById(id);
         if(!product) {
-            throw new Error("product not found");            
+            throw new AppError("product not found");            
         }
         return ProductRepository.delete(id)
     },

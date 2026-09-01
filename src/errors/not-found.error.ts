@@ -1,3 +1,8 @@
-export class notFoundError extends Error{
-    
+import { AppError } from "./AppError";
+
+export class NotFoundError extends AppError{
+    constructor(message = "Resource Not Found"){
+        super(message, 404);
+        this.name = "NotFoundError"
+    }
 }

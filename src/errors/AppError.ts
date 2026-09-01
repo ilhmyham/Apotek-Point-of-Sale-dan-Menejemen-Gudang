@@ -4,4 +4,4 @@ export class AppError extends Error{
         this.name = "AppError";
         Object.setPrototypeOf(this, AppError.prototype);
     }
-}
+}   

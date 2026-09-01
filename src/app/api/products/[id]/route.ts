@@ -1,4 +1,5 @@
 import { ProductService } from "@/services/product.service";
+import { handleApiError } from "@/utils/handleApiErrors";
 import { NextResponse } from "next/server";
 
 export async function GET(request : Request, {params} : {params:Promise<{id:string}>}) {
@@ -23,15 +24,7 @@ export async function GET(request : Request, {params} : {params:Promise<{id:stri
             {status : 201}
         );
     }catch(error){
-        const message =
-        error instanceof Error
-            ? error.message
-            : "Product Not Found";
-
-        return NextResponse.json(
-            { error: message },
-            { status: 404 }
-        );
+        return handleApiError(error)
     }
 }
 
