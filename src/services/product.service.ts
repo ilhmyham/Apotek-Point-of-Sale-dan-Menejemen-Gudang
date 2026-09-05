@@ -2,6 +2,9 @@ import {ProductRepository} from "@/repositories/product.repository";
 import {Prisma, Product} from "@/generated/prisma/client";
 import { AppError } from "@/errors/AppError"
 import { NotFoundError } from "@/errors/not-found.error";
+import prisma from "@/lib/prisma";
+import { CreateProductInput, UpdateProductInput } from "@/validations/product.validation";
+import { BadRequestError } from "@/errors/bad-request.error";
 
 
 export const ProductService = {
@@ -18,72 +21,79 @@ export const ProductService = {
         return product;
     },
 
-    async create(data: Prisma.ProductCreateInput) : Promise<Product>{
-
-        if(typeof data.namaProduct !== "string"){
-            throw new AppError ("Nama produk harus berupa string");
+    async create(data: CreateProductInput) : Promise<Product>{
+        const category = await prisma.category.findUnique({
+            where: {id: data.categoryId}
+        })
+        if(!category){
+            throw new BadRequestError("Kategori tidak ditemukan");
         }
 
-        if (!data.namaProduct?.trim()) {
-            throw new AppError ("Nama produk wajib diisi.");
+        const supplier = await prisma.supplier.findUnique({
+            where: {id: data.supplierId}
+        })
+        if(!supplier){
+            throw new BadRequestError("Supplier tidak ditemukan");
         }
 
-        if (data.namaProduct.trim().length < 3) {
-            throw new AppError ("Nama produk minimal 3 karakter.");
-        }       
-
-        if (data.harga === undefined || data.harga === null) {
-            throw new AppError ("Harga wajib diisi.");
-        }   
-        
-        if(typeof data.harga !== "number"){
-            throw new AppError ("Harga harus berupa number");
+        const createData: Prisma.ProductCreateInput = {
+            namaProduct : data.namaProduct,
+            harga : data.harga,
+            stok : data.stok,
+            unit : data.unit,
+            status : data.status,
+            category : {connect: {id: data.categoryId}},
+            supplier : {connect: {id: data.supplierId}}
         }
-
-        if (Number(data.harga) <= 0) {
-            throw new AppError ("Harga harus lebih dari 0.");
-        }
-
-        if (data.stok === undefined || data.stok === null) {
-            throw new AppError ("Stok wajib diisi.");
-        }
-        
-        if (!Number.isInteger(data.stok)){
-            throw new AppError ("stok harus berupa number");
-        }
-
-        if (data.stok < 0) {
-            throw new AppError ("Stok tidak boleh negatif.");
-        }
-
-        if (data.unit === undefined || data.unit === null) {
-            throw new AppError ("Unit wajib diisi.");
-        }  
-
-        if(typeof data.unit !== 'string'){
-            throw new AppError ("Unit harus berupa string");
-        }
-
-        if (!data.unit?.trim()) {
-            throw new AppError ("Satuan produk wajib diisi.");
-        }
-
-        return ProductRepository.create(data);
+        return ProductRepository.create(createData)
     },
 
-    async update(id : number, data : Prisma.ProductUpdateInput) : Promise<Product>{
-       const product = await ProductRepository.findById(id)
-       if(!product) {
-        throw new AppError("product not found");    
-       }
+    async update(id : number, data : UpdateProductInput) : Promise<Product>{
+        const product = await ProductRepository.findById(id);
+        if(!product){
+            throw new NotFoundError("Produk tidak ditemukan");
+        }
+        if(data.categoryId !== undefined){
+            const category = await prisma.category.findUnique({
+                where: {id: data.categoryId}
+            })
+    
+            if(!category){
+                throw new BadRequestError("Kategori tidak ditemukan");
+            }
+        }
 
-       return ProductRepository.update(id, data);
+        if(data.supplierId !== undefined){
+            const supplierId = await prisma.supplier.findUnique({
+                where:{id : data.supplierId}
+            })
+    
+            if(!supplierId){
+                throw new BadRequestError("Supplier tidak ditemukan");
+            }
+        }
+
+        const updateData : Prisma.ProductUpdateInput = {
+            namaProduct:data.namaProduct,
+            harga: data.harga,
+            stok : data.stok,
+            unit : data.unit,
+            status : data.status,
+            ...(data.categoryId !== undefined && {
+                category : {connect : {id : data.categoryId}}
+            }),
+            ...(data.supplierId !== undefined && {
+                supplier : {connect : {id : data.supplierId}}
+            })
+        }
+
+        return ProductRepository.update(id, updateData)
     },
 
     async delete(id : number) : Promise<void>{
         const product = await ProductRepository.findById(id);
         if(!product) {
-            throw new AppError("product not found");            
+            throw new NotFoundError("product not found");            
         }
         return ProductRepository.delete(id)
     },
@@ -95,7 +105,7 @@ export const ProductService = {
     async deactivate(id : number) : Promise<Product>{
         const product = await ProductRepository.findById(id);
         if(!product) {
-            throw new Error("product not found");            
+            throw new NotFoundError("product not found");            
         }
         return ProductRepository.deactivate(id)
     }
