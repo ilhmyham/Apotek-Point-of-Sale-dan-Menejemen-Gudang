@@ -20,6 +20,7 @@ export const CategoryService = {
     },
 
     async create(data: CreateCategoryInput):Promise<Category>{
+
         const createData : Prisma.CategoryCreateInput = {
             namaCategory : data.namaCategory
         };
