@@ -1,6 +1,5 @@
 import {ProductRepository} from "@/repositories/product.repository";
 import {Prisma, Product} from "@/generated/prisma/client";
-import { AppError } from "@/errors/AppError"
 import { NotFoundError } from "@/errors/not-found.error";
 import prisma from "@/lib/prisma";
 import { CreateProductInput, UpdateProductInput } from "@/validations/product.validation";
@@ -94,8 +93,19 @@ export const ProductService = {
         const product = await ProductRepository.findById(id);
         if(!product) {
             throw new NotFoundError("product not found");            
-        }
-        return ProductRepository.delete(id)
+        };
+
+        const hasTransactionHistory = await prisma.saleDetail.findFirst({
+            where: {productId: id}
+        }) || await prisma.purchaseDetail.findFirst({
+            where : {productId : id}
+        });
+
+        if(hasTransactionHistory){
+            throw new BadRequestError("Produk tidak bisa dihapus karena memilki riwayat transaksi. Gunakan nonaktifkan produk.");
+        };
+
+        await ProductRepository.delete(id);
     },
 
     async search(keyword : string) : Promise<Product[]>{

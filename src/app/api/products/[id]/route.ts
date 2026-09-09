@@ -1,10 +1,7 @@
 import { BadRequestError } from "@/errors/bad-request.error";
-import { NotFoundError } from "@/errors/not-found.error";
 import { ProductService } from "@/services/product.service";
 import { handleApiError } from "@/utils/handleApiErrors";
 import { updateProductSchema } from "@/validations/product.validation";
-import { error } from "console";
-import { notFound } from "next/navigation";
 import { NextResponse } from "next/server";
 
 
