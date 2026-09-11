@@ -3,6 +3,9 @@ import {Prisma, User} from "@/generated/prisma/client";
 import { hasPassowrd } from "@/utils/password";
 import { RegisterUserInput } from "@/validations/user.validation"
 import { BadRequestError } from "@/errors/bad-request.error";
+import { comparePassword } from "@/utils/password";
+import { signToken } from "@/utils/jwt";
+import { LoginInput } from "@/validations/auth.validation";
 
 export type SafeUser = Omit<User, "password">
 
@@ -30,5 +33,21 @@ export const UserService = {
         const user = await UserRepository.create(create);
 
         return toSafeUser(user);
+    },
+
+    async login(data: LoginInput): Promise<{token: string, user:SafeUser}>{
+        const user = await UserRepository.findByUsername(data.username);
+        if(!user){
+            throw new BadRequestError("Username atau password salah");
+        }
+
+        const isPasswordValid = await comparePassword(data.password, user.password);
+        if(!isPasswordValid){
+            throw new BadRequestError("Username atau password salah");
+        }
+
+        const token = await signToken({userId: user.id, role: user.role});
+
+        return {token, user: toSafeUser(user)};
     }
 }
