@@ -3,6 +3,7 @@ import { CategoryService } from "@/services/category.service";
 import { updateCategorySchema } from "@/validations/category.validation";
 import { handleApiError } from "@/utils/handleApiErrors";
 import { BadRequestError } from "@/errors/bad-request.error";
+import { requiereRole } from "@/utils/auth";
 
 
 export async function GET(request: Request, {params} : {params:Promise<{id: string}>}){
@@ -27,6 +28,9 @@ export async function GET(request: Request, {params} : {params:Promise<{id: stri
 
 export async function PUT(request: Request, {params}: {params:Promise<{id: string}>}){
     try{
+        
+        requiereRole(request, ["ADMIN"]);
+
         let body : unknown;
         try{
             body = await request.json()
@@ -62,6 +66,9 @@ export async function PUT(request: Request, {params}: {params:Promise<{id: strin
 
 export async function DELETE(request : Request, {params} : {params:Promise<{id: string}>}){
     try{
+
+        requiereRole(request, ["ADMIN"]);
+
         const { id } = await params;
         const categoryId = Number(id);
 

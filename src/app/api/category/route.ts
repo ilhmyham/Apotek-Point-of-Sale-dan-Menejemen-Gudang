@@ -3,6 +3,7 @@ import { CategoryService } from "@/services/category.service";
 import { createCategorySchema } from "@/validations/category.validation";
 import { handleApiError } from "@/utils/handleApiErrors";
 import { BadRequestError } from "@/errors/bad-request.error";
+import { requiereRole } from "@/utils/auth";
 
 export async function GET(){
    try{
@@ -18,6 +19,9 @@ export async function GET(){
 
 export async function POST(request: Request){
     try{
+
+        requiereRole(request, ["ADMIN"]);
+
         let body : unknown
         try{
             body = await request.json()
