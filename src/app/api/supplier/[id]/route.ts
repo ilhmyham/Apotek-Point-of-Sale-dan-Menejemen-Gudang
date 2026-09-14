@@ -3,7 +3,7 @@ import { SupplierService } from "@/services/supplier.service"
 import { handleApiError } from "@/utils/handleApiErrors"
 import { updateSupplierSchema } from "@/validations/supplier.validation"
 import { NextResponse } from "next/server"
-import { requiereRole } from "@/utils/auth"
+import { requireRole } from "@/utils/auth"
 
 export async function GET(request : Request, {params} : {params:Promise<{id: string}>}){
     try{
@@ -29,7 +29,7 @@ export async function GET(request : Request, {params} : {params:Promise<{id: str
 export async function PUT(request: Request, {params} : {params:Promise<{id: string}>}) {
     try{
 
-        requiereRole(request, ["ADMIN"]);
+        requireRole(request, ["ADMIN"]);
 
         let body : unknown
         try{
@@ -65,7 +65,7 @@ export async function PUT(request: Request, {params} : {params:Promise<{id: stri
 export async function DELETE(request :  Request, {params} : {params:Promise<{id: string}>}) {
     try{
 
-        requiereRole(request, ["ADMIN"]);
+        requireRole(request, ["ADMIN"]);
 
         const { id } = await params
         const supplierId = Number(id)

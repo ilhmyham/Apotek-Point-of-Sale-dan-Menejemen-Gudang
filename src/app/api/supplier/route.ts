@@ -3,7 +3,7 @@ import { SupplierService } from "@/services/supplier.service";
 import { handleApiError } from "@/utils/handleApiErrors";
 import { createSupplierSchema } from "@/validations/supplier.validation";
 import { NextResponse } from "next/server";
-import { requiereRole } from "@/utils/auth";
+import { requireRole } from "@/utils/auth";
 
 export async function GET(){
     try{
@@ -22,7 +22,7 @@ export async function GET(){
 export async function POST(request: Request) {
     try{
 
-        requiereRole(request, ["ADMIN"]);
+        requireRole(request, ["ADMIN"]);
 
         let body : unknown
         try{

@@ -3,7 +3,7 @@ import { ProductService } from "@/services/product.service";
 import { handleApiError } from "@/utils/handleApiErrors";
 import { updateProductSchema } from "@/validations/product.validation";
 import { NextResponse } from "next/server";
-import { requiereRole } from "@/utils/auth";
+import { requireRole } from "@/utils/auth";
 
 
 export async function GET(request : Request, {params} : {params:Promise<{id:string}>}) {
@@ -32,7 +32,7 @@ export async function PUT(request : Request, {params} : {params:Promise<{id:stri
 
     try{
 
-        requiereRole(request, ["ADMIN"]);
+        requireRole(request, ["ADMIN"]);
 
         let body: unknown;
         try{
@@ -71,7 +71,7 @@ export async function PUT(request : Request, {params} : {params:Promise<{id:stri
 export async function DELETE(request : Request, {params} : {params:Promise<{id:string}>}){
     try{
 
-        requiereRole(request, ["ADMIN"]);
+        requireRole(request, ["ADMIN"]);
 
         const {id} = await params;
         const productId = Number(id);

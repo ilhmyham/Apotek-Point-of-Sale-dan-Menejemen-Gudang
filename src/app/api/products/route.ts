@@ -3,12 +3,11 @@ import { ProductService } from "@/services/product.service";
 import { handleApiError } from "@/utils/handleApiErrors";
 import { createProductSchema } from "@/validations/product.validation";
 import { BadRequestError } from "@/errors/bad-request.error";
-import { requiereRole } from "@/utils/auth";
+import { requireRole } from "@/utils/auth";
 
 export async function GET() {
     try{
-        const products = await ProductService.findAll();
-        console.log(products)
+        const products = await ProductService.findAll();      
         return NextResponse.json(
             {
                 "message" : "Get all Product",
@@ -25,7 +24,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
 
-    requiereRole(request, ["ADMIN"]);
+    requireRole(request, ["ADMIN"]);
     
     let body: unknown;
     try {
