@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { PurchaseService } from "@/services/purchase.service";
 import { handleApiError } from "@/utils/handleApiErrors";
 import { BadRequestError } from "@/errors/bad-request.error";
-import { error } from "console";
 
 
 export async function GET(request: Request, {params} : {params:Promise<{id: string}>}){
