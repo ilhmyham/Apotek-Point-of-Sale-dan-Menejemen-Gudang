@@ -6,6 +6,7 @@ import { BadRequestError } from "@/errors/bad-request.error";
 import { comparePassword } from "@/utils/password";
 import { signToken } from "@/utils/jwt";
 import { LoginInput } from "@/validations/auth.validation";
+import { NotFoundError } from "@/errors/not-found.error";
 
 export type SafeUser = Omit<User, "password">
 
@@ -49,5 +50,15 @@ export const UserService = {
         const token = await signToken({userId: user.id, role: user.role});
 
         return {token, user: toSafeUser(user)};
+    },
+
+    async getProfile(userId: number):Promise<SafeUser>{
+        const user = await UserRepository.findById(userId);
+
+        if(!user){
+            throw new NotFoundError("User tidak ditemukan");
+        }
+
+        return toSafeUser(user)
     }
 }
