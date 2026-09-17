@@ -4,6 +4,7 @@ import { NotFoundError } from "@/errors/not-found.error";
 import prisma from "@/lib/prisma";
 import { CreateProductInput, UpdateProductInput } from "@/validations/product.validation";
 import { BadRequestError } from "@/errors/bad-request.error";
+import { notFound } from "next/navigation";
 
 
 export const ProductService = {
@@ -118,5 +119,14 @@ export const ProductService = {
             throw new NotFoundError("product not found");            
         }
         return ProductRepository.deactivate(id)
+    },
+
+    async active(id: number):Promise<Product>{
+        const product = await ProductRepository.findById(id);
+        if(!product){
+            throw new NotFoundError("Produk tidak ditemukan");        
+        }
+
+        return ProductRepository.active(id);
     }
 }

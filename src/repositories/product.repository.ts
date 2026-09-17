@@ -53,15 +53,11 @@ export const ProductRepository = {
     });
   },
 
+  async active(id: number): Promise<Product>{
+    return await prisma.product.update({
+      where : { id },
+      data : {status : true},
+    });
+  },
+
 }
-
-
-// export interface ProductRepository {
-//   findAll(): Promise<Product[]>;
-//   findById(id: number): Promise<Product | null>;
-//   search(name: string): Promise<Product[]>;
-//   create(data: Prisma.ProductCreateInput): Promise<Product>;
-//   update(id: number, data: Prisma.ProductUpdateInput): Promise<Product>;
-//   delete(id: number): Promise<void>;
-  
-// }
