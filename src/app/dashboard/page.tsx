@@ -75,6 +75,12 @@ export default function DashboardPage() {
                             >
                                 Kelola Supplier
                             </Link>
+                            <Link
+                                href="/dashboard/pembelian"
+                                className="border border-ink-text/15 rounded p-4 hover:bg-white transition"
+                            >
+                                Kelola Pembelian Obat
+                            </Link>
                         </>
                     )}
                 </div>

@@ -19,7 +19,6 @@ import {
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { PATCH } from "@/app/api/products/[id]/deactive/route";
 
 interface Product {
     id: number;
@@ -237,14 +236,14 @@ export default function ProdukPage() {
                                         Edit
                                     </Button>
                                      {product.status ? (
-        <Button variant="outline" size="sm" onClick={() => handleDeactivate(product.id)}>
-            Nonaktifkan
-        </Button>
-    ) : (
-        <Button variant="outline" size="sm" onClick={() => handleActive(product.id)}>
-            Aktifkan
-        </Button>
-    )}
+                                            <Button variant="outline" size="sm" onClick={() => handleDeactivate(product.id)}>
+                                                Nonaktifkan
+                                            </Button>
+                                            ) : (
+                                            <Button variant="outline" size="sm" onClick={() => handleActive(product.id)}>
+                                                Aktifkan
+                                            </Button>
+                                        )}
                                     <Button
                                         variant="outline"
                                         size="sm"
