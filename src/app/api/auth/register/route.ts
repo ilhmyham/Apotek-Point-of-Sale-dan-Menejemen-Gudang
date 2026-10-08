@@ -4,9 +4,11 @@ import { UserService } from "@/services/user.service";
 import { registerUserSchema } from "@/validations/user.validation";
 import { handleApiError } from "@/utils/handleApiErrors";
 import { BadRequestError } from "@/errors/bad-request.error";
+import { requireRole } from "@/utils/auth";
 
 export async function POST(request: Request) {
     try {
+        requireRole(request, ["ADMIN"]);
         let body: unknown;
         try {
             body = await request.json();
