@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 import {
     Sidebar,
     SidebarContent,
@@ -16,11 +17,22 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
-    const pathname = usePathname();
+
+    // const { user, isLoading } = useAuth();
+    const router = useRouter();
+
+    async function handleLogout() {
+        await fetch("/api/auth/logout", { method: "POST" });
+        router.push("/login");
+    }
+    
+
+    const pathname = usePathname();    
+    
     
     // Destructuring langsung dari useAuth tanpa casting ke 'any'
-    const { user, handleLogout } = useAuth() as {
-        user: { role: string } | null;
+    const { user } = useAuth() as {
+        user: { role: string; nama?: string; name?: string } | null;
         handleLogout?: () => void;
         logout?: () => void;
         signOut?: () => void;
@@ -90,14 +102,20 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="border-t p-3">
+            <SidebarFooter className="border-t p-3">                
+                <div>
+                    <h1 className="font-display text-xl text-ink ">Apotek D</h1>
+                    <p className="text-ink text-sm">
+                        {user.nama} — {user.role === "ADMIN" ? "Administrator" : "Kasir"}
+                    </p>
+                </div>
                 <Button 
                     variant="destructive" 
                     className="w-full justify-start" 
                     onClick={onLogout}
                 >
                     Keluar
-                </Button>
+                </Button>                
             </SidebarFooter>
         </Sidebar>
     );

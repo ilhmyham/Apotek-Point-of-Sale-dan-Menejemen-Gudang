@@ -141,12 +141,12 @@ export default function SupplierPage(){
     }
 
     if(authLoading){
-        return <div className="min-h-screen flex items-center justify-center bg-paper"><p>Memuat...</p></div>        
+        return <div className="min-h-screen flex items-center justify-center bg-slate-100"><p>Memuat...</p></div>        
     }
     if(!user) return null;
 
     return (
-        <div className="min-h-screen bg-paper p-6">
+        <div className="min-h-screen bg-slate-100 p-6">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="font-display text-2xl text-ink-text">Kelola Supplier</h1>
                 <Button onClick={openCreateForm} className="bg-amber hover:bg-amber-hover text-white">

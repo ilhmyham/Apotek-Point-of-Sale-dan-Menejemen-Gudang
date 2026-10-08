@@ -6,14 +6,14 @@ type TransactionClient = Prisma.TransactionClient;
 export const SaleRepository = {
     async findAll():Promise<Sale[]>{
         return prisma.sale.findMany({
-            include: {saleDetails: true, user:true}
+            include: {saleDetails: {include: {product : true}}, user:true}
         });
     },
 
     async findById(id: number):Promise<Sale | null>{
         return prisma.sale.findUnique({
             where: {id},
-            include: {saleDetails: true, user: true}
+            include: {saleDetails: { include: { product: true } }, user: true}
         })
     },
 

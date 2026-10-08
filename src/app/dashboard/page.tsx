@@ -1,90 +1,64 @@
-// src/app/dashboard/page.tsx
 "use client";
+import { SalesChart } from "@/components/sales-chart";
 
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
+import { ActivityLog, ActivityItem } from "@/components/activity-log";
+
+import { useState, useEffect } from "react";
+
+interface MonthlySales {
+  month : string;
+  penjualan : number;
+  transaksi : number;
+}
 
 export default function DashboardPage() {
-    // 1. Data user & status loading diambil cukup dari hook ini
-    const { user, isLoading } = useAuth();
-    const router = useRouter();
+  const [salesData, setSalesData] = useState<MonthlySales[]>([]);
+  const [growthPercent, setGrowthPercent] = useState(0); 
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    async function handleLogout() {
-        await fetch("/api/auth/logout", { method: "POST" });
-        router.push("/login");
-    }
+   useEffect(() => {
+        const timeoutId = setTimeout(async () => {
+            const [salesRes, activityRes] = await Promise.all([
+                fetch("/api/dashboard/sales-summary"),
+                fetch("/api/dashboard/activity"),
+            ]);
+            const salesJson = await salesRes.json();
+            const activityJson = await activityRes.json();
+            setSalesData(salesJson.data.months ?? []);
+            setGrowthPercent(salesJson.data.growthPercent ?? 0);
+            setActivities(activityJson.data ?? []);
+            setIsLoading(false);
 
-    if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-ink">
-                <p className="text-paper">Memuat...</p>
-            </div>
-        );
-    }
+            
+        }, 0);
 
-    if (!user) {
-        return null;
-    }
+        return () => clearTimeout(timeoutId);
+    }, []);
 
-    return (
-        <div className="min-h-screen bg-paper">
-            <header className="bg-ink px-6 py-4 flex items-center justify-between">
-                <div>
-                    <h1 className="font-display text-xl text-paper">Apotek D</h1>
-                    <p className="text-sage text-sm">
-                        {user.nama} — {user.role === "ADMIN" ? "Administrator" : "Kasir"}
-                    </p>
-                </div>
-                <button
-                    onClick={handleLogout}
-                    className="text-sage hover:text-paper text-sm"
-                >
-                    Keluar
-                </button>
-            </header>
+     if (isLoading) return <p className="p-6 text-sage">Memuat dashboard...</p>;
+  return (
+  <div className="p-4 md:p-6 space-y-6">
+      {/* Header Dashboard */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          Dashboard Penjualan
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Ringkasan grafik transaksi dan riwayat aktivitas terbaru sistem POS.
+        </p>
+      </div>
 
-            <main className="p-6">
-                <h2 className="font-display text-2xl text-ink-text mb-4">Menu</h2>
-
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <Link
-                        href="/dashboard/kasir"
-                        className="border border-ink-text/15 rounded p-4 hover:bg-white transition"
-                    >
-                        Transaksi Penjualan
-                    </Link>
-
-                    {user.role === "ADMIN" && (
-                        <>
-                            <Link
-                                href="/dashboard/produk"
-                                className="border border-ink-text/15 rounded p-4 hover:bg-white transition"
-                            >
-                                Kelola Produk
-                            </Link>
-                            <Link
-                                href="/dashboard/kategori"
-                                className="border border-ink-text/15 rounded p-4 hover:bg-white transition"
-                            >
-                                Kelola Kategori
-                            </Link>
-                            <Link
-                                href="/dashboard/supplier"
-                                className="border border-ink-text/15 rounded p-4 hover:bg-white transition"
-                            >
-                                Kelola Supplier
-                            </Link>
-                            <Link
-                                href="/dashboard/pembelian"
-                                className="border border-ink-text/15 rounded p-4 hover:bg-white transition"
-                            >
-                                Kelola Pembelian Obat
-                            </Link>
-                        </>
-                    )}
-                </div>
-            </main>
+      {/* Grid Layout: Otomatis membagi tinggi yang sama (stretch) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <SalesChart data={salesData} growthPercent={growthPercent}/>
         </div>
-    );
+
+        <div className="lg:col-span-1">
+          <ActivityLog activities={activities} />
+        </div>
+      </div>
+    </div>
+  );
 }

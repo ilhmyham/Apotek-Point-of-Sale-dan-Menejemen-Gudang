@@ -12,7 +12,7 @@ export default function DashboardLayout({
             {/* Sidebar Komponen Shadcn */}
             <AppSidebar />
 
-            <main className="flex-1 w-full bg-paper min-h-screen">
+            <main className="flex-1 w-full bg-slate-100 min-h-screen">
                 {/* Trigger untuk buka/tutup Sidebar jika dalam mode collapsible */}
                 <div className="p-4 border-b flex items-center bg-white">
                     <SidebarTrigger />

@@ -191,11 +191,11 @@ export default function ProdukPage() {
         return suppliers.find((s) => s.id === id)?.namaSupplier ?? "-";
     }
 
-    if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-paper"><p>Memuat...</p></div>;
+    if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-slate-100"><p>Memuat...</p></div>;
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-paper p-6">
+        <div className="min-h-screen bg-slate-100 p-6">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="font-display text-2xl text-ink-text">Kelola Produk</h1>
                 <Button onClick={openCreateForm} className="bg-amber hover:bg-amber-hover text-white">
@@ -319,26 +319,28 @@ export default function ProdukPage() {
                         <div>
                             <Label>Kategori</Label>
                             <Select
-                                    value={form.categoryId ? String(form.categoryId) : ""}
-                                    onValueChange={(val) => setForm({ ...form, categoryId: val ?? "" })}
-                                >
-                                <SelectTrigger className="mt-1.5 w-full">
-                                    <SelectValue placeholder="Pilih kategori" />
-                                </SelectTrigger>
-                                <SelectContent>
+    items={categories.map((c) => ({ value: String(c.id), label: c.namaCategory }))}
+    value={form.categoryId || null}
+    onValueChange={(val) => setForm({ ...form, categoryId: val ?? "" })}
+>
+                            <SelectTrigger className="mt-1.5 w-full">
+                            <SelectValue placeholder="Pilih kategori" />
+                            </SelectTrigger>
+                            <SelectContent>
                                     {categories.map((c) => (
-                                        <SelectItem key={c.id} value={String(c.id)}>
-                                            {c.namaCategory}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                    <SelectItem key={c.id} value={String(c.id)}>
+                                    {c.namaCategory}
+                                </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         </div>
 
                         <div>
                             <Label>Supplier</Label>
                             <Select
-                                    value={form.supplierId || undefined}
+                                    items={suppliers.map((c) => ({ value: String(c.id), label: c.namaSupplier }))}
+                                    value={form.supplierId || null}
                                     onValueChange={(val) => setForm({ ...form, supplierId: val ?? "" })}
                                 >
                                 <SelectTrigger className="mt-1.5 w-full">

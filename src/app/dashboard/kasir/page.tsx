@@ -156,11 +156,11 @@ export default function KasirPage() {
         }
     }
 
-    if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-paper"><p>Memuat...</p></div>;
+    if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-slate-100"><p>Memuat...</p></div>;
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-paper p-6 grid md:grid-cols-2 gap-6">
+        <div className="min-h-screen bg-slate-100 p-6 grid md:grid-cols-2 gap-6">
             {/* Kolom kiri: cari & pilih produk */}
             <div>
                 <h1 className="font-display text-2xl text-ink-text mb-4">Transaksi Penjualan</h1>
@@ -272,7 +272,7 @@ export default function KasirPage() {
                     <Button
                         onClick={handleSubmit}
                         disabled={isSubmitting || cart.length === 0}
-                        className="w-full bg-amber hover:bg-amber-hover text-white"
+                        className="w-full bg-slate-700 hover:bg-slate-300 text-white"
                     >
                         {isSubmitting ? "Memproses..." : "Bayar"}
                     </Button>
